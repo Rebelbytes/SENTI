@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sentiment Analysis Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .comment-card {
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .sentiment-chart {
+            max-width: 400px;
+            margin: auto;
+            display: block;
+        }
+
+        .comment-section {
+            margin-top: 30px;
+        }
+
+        .comment-body {
+            display: block;
+            padding: 10px;
+        }
+
+        h3 {
+            margin-top: 20px;
+        }
+
+        .toggle-btn {
+            font-size: 0.9em;
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .comment-card:hover {
+            transform: scale(1.02);
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center">Sentiment Analysis Results</h1>
+        <p class="text-center">Video Title: {{ video_title }}</p>
+        <p class="text-center">Video Link:
+            <a href="https://www.youtube.com/watch?v={{ video_id }}" target="_blank">{{ video_id }}</a>
+        </p>
+
+        <img src="{{ url_for('static', filename='sentiment_pie_chart.png') }}" class="sentiment-chart">
+
+        <div class="row text-center mt-4">
+            <div class="col-md-4">
+                <h4 class="text-success">Positive</h4>
+                <p>{{ results['positive_percentage'] }}%</p>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-danger">Negative</h4>
+                <p>{{ results['negative_percentage'] }}%</p>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-primary">Neutral</h4>
+                <p>{{ results['neutral_percentage'] }}%</p>
+            </div>
+        </div>
+
+        <div class="comment-section">
+            <h3>Top 10 Positive Comments</h3>
+            {% for comment in results['positive_comments'] %}
+            <div class="card comment-card border-success" onclick="toggleCommentBody(this)">
+                <div class="comment-body">{{ comment }}</div>
+                <div class="card-header text-success">Comment</div>
+            </div>
+            {% endfor %}
+
+            <h3>Top 10 Negative Comments</h3>
+            {% for comment in results['negative_comments'] %}
+            <div class="card comment-card border-danger" onclick="toggleCommentBody(this)">
+                <div class="comment-body">{{ comment }}</div>
+                <div class="card-header text-danger">Comment</div>
+            </div>
+            {% endfor %}
+
+            <h3>Top 10 Neutral Comments</h3>
+            {% for comment in results['neutral_comments'] %}
+            <div class="card comment-card border-primary" onclick="toggleCommentBody(this)">
+                <div class="comment-body">{{ comment }}</div>
+                <div class="card-header text-primary">Comment</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Analyze Another Video</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleCommentBody(card) {
+            const body = card.querySelector('.comment-body');
+            body.style.display = (body.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function toggleComments(type) {
+            let selector;
+            if (type === 'positive') selector = '.border-success .comment-body';
+            else if (type === 'negative') selector = '.border-danger .comment-body';
+            else selector = '.border-secondary .comment-body';
+
+            const bodies = document.querySelectorAll(selector);
+            bodies.forEach(body => {
+                body.style.display = (body.style.display === 'block') ? 'none' : 'block';
+            });
+        }
+    </script>
+</body>
+
+</html>
