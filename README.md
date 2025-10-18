@@ -1,0 +1,2 @@
+# SENTI
+NLP_miniprj
